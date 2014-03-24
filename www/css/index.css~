@@ -209,28 +209,13 @@ to {
 }
 
 .selectImage {
-	background: #0000FF;
-	padding: 15px;
-	height: 15px;
-	width: auto;
+	background: #C3CCC3;
+	padding: 5px;
+	width: 120px;
 	color: #FFF;
 	border-radius: 3px;
 	float: left;
-	left: 10px;
 }
-
-
-.takeImage {
-	background: #0000FF;
-	height: 15px;
-	padding: 15px;
-	width: auto;
-	color: #FFF;
-	border-radius: 3px;
-	float: right;
-	right: 10px;
-}
-
 
 .submitAd {
 	background: #1CB6F1;
@@ -277,52 +262,4 @@ color: #F00;
 	top: 0px;
 	left: 0px;
 	background: rgba(58, 58, 58, 0.65);	
-}
-
-#base64image {
-align-self:center;
-clear:both;
-display:block; 
-width:200px; 
-height:200px;
-margin-left: auto;
-margin-right: auto;
-}
-
-#imgLargeDiv {
-width:1920px;
-height:1080px;
-display:none;
-visibility:hidden;
-position:absolute;
-left:0px;
-top:0px;
-z-index: 99;
-}
-
-#progressBarDiv {
-    display:none;
-    width: 98%;
-    height: 30px;
-    clear: both;
-    background-color: #d3d3d3;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-    padding-top: 1px;
-    padding-bottom: 1px;
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
-#progressBar {
-    width: 0%;
-    height: 90%;
-    background-color: #0000ff;
-    clear: both;
-}
-
-.ui-progressbar-value {
-    background-color: #0000ff;
 }

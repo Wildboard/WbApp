@@ -1,0 +1,95 @@
+.spinftw {
+  border-radius:100%;
+  display:inline-block;
+  height:30px;
+  width:30px;
+  -webkit-animation:loader infinite 4s;
+     -moz-animation:loader infinite 4s;
+          animation:loader infinite 4s;
+  box-shadow:25px 25px #3498db,
+    -25px 25px #9b59b6,
+    -25px -25px #e74c3c,
+    25px -25px #2ecc71;
+}
+
+
+@-webkit-keyframes loader {
+  0%,100% {
+      box-shadow:25px 25px #3498db,
+        -25px 25px #9b59b6,
+        -25px -25px #e74c3c,
+        25px -25px #2ecc71;
+  }
+  25% {
+      box-shadow:-25px 25px #3498db,
+        -25px -25px #9b59b6,
+        25px -25px #e74c3c,
+        25px 25px #2ecc71;
+  }
+  50% {
+      box-shadow:-25px -25px #3498db,
+        25px -25px #9b59b6,
+        25px 25px #e74c3c,
+        -25px 25px #2ecc71;
+  }
+  75% {
+      box-shadow:25px -25px #3498db,
+        25px 25px #9b59b6,
+        -25px 25px #e74c3c,
+        -25px -25px #2ecc71;
+  }
+}
+
+@-moz-keyframes loader {
+  0%,100% {
+      box-shadow:25px 25px #3498db,
+        -25px 25px #9b59b6,
+        -25px -25px #e74c3c,
+        25px -25px #2ecc71;
+  }
+  25% {
+      box-shadow:-25px 25px #3498db,
+        -25px -25px #9b59b6,
+        25px -25px #e74c3c,
+        25px 25px #2ecc71;
+  }
+  50% {
+      box-shadow:-25px -25px #3498db,
+        25px -25px #9b59b6,
+        25px 25px #e74c3c,
+        -25px 25px #2ecc71;
+  }
+  75% {
+      box-shadow:25px -25px #3498db,
+        25px 25px #9b59b6,
+        -25px 25px #e74c3c,
+        -25px -25px #2ecc71;
+  }
+}
+
+@keyframes loader {
+  0%,100% {
+      box-shadow:25px 25px #3498db,
+        -25px 25px #9b59b6,
+        -25px -25px #e74c3c,
+        25px -25px #2ecc71;
+  }
+  25% {
+      box-shadow:-25px 25px #3498db,
+        -25px -25px #9b59b6,
+        25px -25px #e74c3c,
+        25px 25px #2ecc71;
+  }
+  50% {
+      box-shadow:-25px -25px #3498db,
+        25px -25px #9b59b6,
+        25px 25px #e74c3c,
+        -25px 25px #2ecc71;
+  }
+  75% {
+      box-shadow:25px -25px #3498db,
+        25px 25px #9b59b6,
+        -25px 25px #e74c3c,
+        -25px -25px #2ecc71;
+  }
+}
