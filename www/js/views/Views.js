@@ -15,6 +15,11 @@
 			app.ScanQR.init()
 			app.ScanQR();
 			break
+		case "GetAd":
+			console.log("GetAd: ")
+			app.GetAd.init()
+			app.GetAd();
+			break
 		}
 	}
 	// returns {} for viewNavigator
@@ -35,6 +40,13 @@
 				view : app.PostAd()
 			};
 			break
+		case "GetAd":
+			return {
+				title : null,
+				backLabel : null,
+				view : app.GetAd()
+			};
+			break
 		}
 	}
 	// returns HTML Object
@@ -43,6 +55,9 @@
 		switch (view) {
 		case "ScanQR":
 			return app.ScanQR();
+			break
+		case "GetAd":
+			return app.GetAd();
 			break
 		case "PostAd":
 			return app.PostAd();
