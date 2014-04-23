@@ -1,5 +1,5 @@
 (function(window) {
-  console.log("top) Get Ad";
+  console.log("top: Get Ad");
 
     function wbAlert(s) {
       navigator.notification.alert(s, function(){});
