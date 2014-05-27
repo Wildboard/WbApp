@@ -62,7 +62,7 @@
 		html += "<h1>" + title + "</h1>";
 		html += "<h2>" + subtitle + "</h2>";
 		html += contact + "<br/>";
-		html += "<img height=\"40\" width=\"30\" src=\"" + imgSrc + "\"></img>";
+		html += "<img height=\"120\" width=\"160\" src=\"" + imgSrc + "\"></img>";
 		html += "</div>";
 		$('#savedFlyersOuterDiv').html(html);
 	    } catch (ex) {
@@ -70,15 +70,14 @@
 	    }
 	}
     }
-
-
-    
+   
     $(".pageGetAd").css("display", "block");
     app.GetAd.Content = $(".pageGetAd");
     $('#serverMsg').html("");
     
     // TODO????
     $('#idGetAdArrowUp').css("display", "none");
+    $('#divDraggedFlyer').empty();
 
     function onConnect() {
 	// Step 9.
@@ -126,22 +125,37 @@
       var flyerHtml = data.flyerHtml;
       var flyerJson = data.flyerJson;
       console.log("Received " + data.flyerId + "; saving.");
+      console.log(data.flyerJson);
       // Step 27.
+
+      // Modify the URL to point to main...
+      flyerJson.mediaArea[0] = imgSrc.replace("localhost/images","ads.wildboard.net/images/demo");
       
-      window.localStorage.setItem("flyerJson_" + flyerId, flyerJson);
-      var savedFlyersArr = fetchSavedFlyers();
-      var savedFlyersStr = savedFlyersArr.join();
-      window.localStorage.setItem("flyers", savedFlyersStr);
-
       var imgSrc = flyerJson.mediaArea[0];
-      imgSrc = imgSrc.replace("localhost/images","ads.wildboard.net/images/demo");
 
-      console.log("Image: " + imgSrc);
-      var html = "<img height=\"40\" width=\"30\" src=\"" + imgSrc + "\"></img>";
-      $('#savedFlyersOuterDiv').html(html);
+      var html = "<img height=\"120\" width=\"160\" src=\"" + imgSrc + "\"></img>";
+      $('#divDraggedFlyerImg').html(html);
+      $('<input type="button" id="buttonKeep" value="Keep"></button>').appendTo('#divButtonKeep');
+      $('<input type="button" id="buttonDiscard" value="Discard"></button>').appendTo('#divButtonDiscard');
 
-      //refreshSavedFlyers();
-
+      $('#divButtonKeep').on('click', 
+			     '#buttonKeep', 
+			     function() {
+				 window.localStorage.setItem("flyerJson_" + flyerId, flyerJson);
+				 var savedFlyersArr = fetchSavedFlyers();
+				 savedFlyersArr.push(flyerId);
+				 var savedFlyersStr = savedFlyersArr.join();
+				 window.localStorage.setItem("flyers", savedFlyersStr);
+				 refreshSavedFlyers();
+				 $('#divDraggedFlyer').empty();
+			     });
+      
+      $('#divButtonDiscard').on('click', 
+				'#buttonDiscard', 
+				function() {
+				    refreshSavedFlyers();
+				    $('#divDraggedFlyer').empty();
+				});
       // Step 28.
       disconnect();
     }
@@ -153,18 +167,16 @@
 	$('#serverMsg').html('<font color="' + 
 			     myColor + 
 			     '">Drag the flyer to the ' +
-			     myColor +
-			     ' area on the screen to get it on your phone.' +
+			     ' arrow on the screen to get it on your phone.' +
 			     '</font>');
 	// http://css-tricks.com/snippets/css/css-triangle/
 	$('#idGetAdArrowUp').css("display", "block");
-	$('#idGetAdArrowUp').css("width", "0");
-	$('#idGetAdArrowUp').css("height", "0");
-	$('#idGetAdArrowUp').css("border-left", "200px solid transparent");
-	$('#idGetAdArrowUp').css("border-right", "200px solid transparent");
-	$('#idGetAdArrowUp').css("border-bottom", "40px solid " +myColor);
+	//$('#idGetAdArrowUp').css("width", "0");
+	//$('#idGetAdArrowUp').css("height", "0");
+	//$('#idGetAdArrowUp').css("border-left", "200px solid transparent");
+	//$('#idGetAdArrowUp').css("border-right", "200px solid transparent");
+	//$('#idGetAdArrowUp').css("border-bottom", "40px solid " +myColor);
     }
-	
     
     // Events:
     // hi (client->server)
