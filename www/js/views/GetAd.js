@@ -1,5 +1,13 @@
 (function(window) {
-    console.log("Entering GetAd view.");
+    
+    var debugCnt = 0;
+    
+    function debugLog(s) {
+	debugCnt ++;
+	console.log('' + debugCnt + ": " + s);
+    }
+    
+    debugLog("Entering GetAd view.");
 
     function wbAlert(s) {
       navigator.notification.alert(s, function(){});
@@ -13,9 +21,10 @@
 
 
   app.GetAd = function() {
-    $(".pageGetAd").css("display", "block");
-    app.GetAd.init();
-    return app.GetAd.Content;
+      debugLog("In app.GetAd");
+      $(".pageGetAd").css("display", "block");
+      app.GetAd.init();
+      return app.GetAd.Content;
   }
 
   app.GetAd.Content = $(".pageGetAd");
@@ -24,8 +33,8 @@
   app.GetAd.initiated = false;
 
   app.GetAd.init = function() {
-
-    app.GetAd.initiated = true;
+      debugLog("In app.getAd.init()");
+      app.GetAd.initiated = true;
 
     app.GetAd.Options = {};
 
@@ -35,37 +44,45 @@
 	if (flyersStr) {
 	    flyersArr = flyersStr.split(",");
 	}  
+	//	debugLog("XXX fetchSavedFlyers(): Fetched flyers: " + flyersStr + " (" + flyersArr.length + ")");
 	return flyersArr;
     }
 
     function refreshSavedFlyers() {
+	$('#savedFlyersOuterDiv').empty();
 	var flyersArr = fetchSavedFlyers();
-	console.log("Fetched " + flyersArr.length + " saved flyers");
-	for (var flyerId in flyersArr) {
-	    console.log("Got " + flyerId);
+	//	debugLog("XXX refreshSavedFlyers(): Found " + flyersArr.length + " saved flyers");
+	for (var i = 0; i < flyersArr.length; i++) {
+	    var flyerId = flyersArr[i];
+	    //	    debugLog("XXX refreshSavedFlyers(): Flyer ID " + flyerId);
 	    try {
-		var flyerJsonStr = window.localStorage.getItem("flyerJson_"+flyerId);
-		var flyerJson = eval(flyerJsonStr);
+		var flyerKey = "flyerJson_"+flyerId;
+		var flyerJsonStr = window.localStorage.getItem(flyerKey);
+		// debugLog("XXX refreshSavedFlyers(): Fetched " + flyerKey +": " + flyerJsonStr);
+		var flyerJson = JSON.parse(flyerJsonStr);
 		var imgSrc = flyerJson.mediaArea[0];
 		var title = flyerJson.titleArea.title;
 		var subtitle = "";
-		for (var sub in flyerJson.titleArea.subtitle) { 
-		    subtitle += sub + "<br/>\n";
+		for (var idx in flyerJson.titleArea.subtitle) { 
+		    subtitle += flyerJson.titleArea.subtitle[idx] + "<br/>\n";
 		}
 		var desc = flyerJson.bodyArea.description;
 		var contact = "";
-		for (var con in flyerJson.contactArea) {
-		    contact += con.text + "<br/>\n";
+		for (var idx in flyerJson.contactArea) {
+		    contact += flyerJson.contactArea[idx].text + "<br/>\n";
 		    // TODO type
 		}
-		var html = "<div id=\"divFlyer" + flyerId + "\">";
+		var html = "<div height=\"180\" width=\"180\" style=\"border-style:solid;\" id=\"divFlyer" + flyerId + "\">";
 		html += "<h1>" + title + "</h1>";
 		html += "<h2>" + subtitle + "</h2>";
+		html += desc +"<br/>";
 		html += contact + "<br/>";
-		html += "<img height=\"120\" width=\"160\" src=\"" + imgSrc + "\"></img>";
+		html += "<img height=\"120\" align=\"center\" width=\"160\" src=\"" + imgSrc + "\"></img>";
 		html += "</div>";
-		$('#savedFlyersOuterDiv').html(html);
+		debugLog("Writing " + html);
+		$(html).appendTo('#savedFlyersOuterDiv');
 	    } catch (ex) {
+		debugLog("XXX refreshSavedFlyers(): Error: " + ex);
 		// do nothing
 	    }
 	}
@@ -77,10 +94,26 @@
     
     // TODO????
     $('#idGetAdArrowUp').css("display", "none");
-    $('#divDraggedFlyer').empty();
+    
+    function clearDivDraggedFlyer() {
+	$('#divDraggedFlyer').empty();
+	$('<div id="divDraggedFlyerImg"></div>').appendTo('#divDraggedFlyer');
+	$('<div id="divButtons"></div>').appendTo('#divDraggedFlyer');
+    }
+    
+    clearDivDraggedFlyer();
 
     function onConnect() {
 	// Step 9.
+	if (app.GetAd.Options.socket) {
+	    if (app.GetAd.Options.socket.id) {
+		debugLog("Connected: " + app.GetAd.Options.socket.id);     
+	    } else {
+		debugLog("Connected: " + app.GetAd.Options.socket);
+	    }
+	} else {
+	    debugLog("Weird: " + app.GetAd.Options.socket);
+	}
 	app.GetAd.Options.socket.emit('phoneHi', { deviceId : device.uuid});
     }
 
@@ -97,12 +130,12 @@
     }      
 
     function disconnect() {
-	console.log("Disconnecting.");
+	debugLog("Disconnecting.");
 	if (app.GetAd.Options.socket) {
 	    try {
 		app.GetAd.Options.socket.disconnect();
 	    } catch (ex) {
-		console.log("Error disconnecting: " + ex);
+		debugLog("Error disconnecting: " + ex);
 	    }
 	}
 	$('#idGetAdArrowUp').css("display", "none");
@@ -116,46 +149,65 @@
 	  return;
       }
       // Step 14 in progress
-      wbAlert("Connecting to " + data[0]);
+      debugLog("Connecting to " + data[0] + ".");
+      $('#serverMsg').html("Connecting to " + data[0] + ".");
       app.GetAd.Options.socket.emit('phoneConnectTo', {boardName : data[0]});
     }
     
     function onGetAd(data) {
       var flyerId = data.flyerId;
       var flyerHtml = data.flyerHtml;
-      var flyerJson = data.flyerJson;
-      console.log("Received " + data.flyerId + "; saving.");
-      console.log(data.flyerJson);
+      var flyerJsonStr = data.flyerJson;
+      debugLog("Received " + data.flyerId);
+      var flyerJson = JSON.parse(flyerJsonStr);
+      debugLog("Parsed JSON: " + flyerJson.titleArea.title);
       // Step 27.
-
-      // Modify the URL to point to main...
-      flyerJson.mediaArea[0] = imgSrc.replace("localhost/images","ads.wildboard.net/images/demo");
       
-      var imgSrc = flyerJson.mediaArea[0];
+      var imgSrc = "";
+      // Modify the URL to point to main...
+      if (flyerJson.mediaArea.length > 0) {
+	  flyerJson.mediaArea[0] = flyerJson.mediaArea[0].replace("localhost/images","ads.wildboard.net/images/demo");
+	  imgSrc = flyerJson.mediaArea[0];
+      }
+
+      flyerJsonStr = JSON.stringify(flyerJson);
 
       var html = "<img height=\"120\" width=\"160\" src=\"" + imgSrc + "\"></img>";
-      $('#divDraggedFlyerImg').html(html);
-      $('<input type="button" id="buttonKeep" value="Keep"></button>').appendTo('#divButtonKeep');
-      $('<input type="button" id="buttonDiscard" value="Discard"></button>').appendTo('#divButtonDiscard');
 
-      $('#divButtonKeep').on('click', 
-			     '#buttonKeep', 
+      // debugLog("XXX: Setting html to " + html);
+
+      $('#divDraggedFlyerImg').html(html);
+      var btnKeep = $('<input type="button" id="buttonKeep" value="Keep"></button>');
+      var btnDiscard = $('<input type="button" id="buttonDiscard" value="Discard"></button>');
+
+      //      debugLog("XXX: " + $('#divDraggedFlyer').html());
+      //      debugLog("XXX: Attaching click to " + btnKeep);
+
+      btnKeep.on('click', 
 			     function() {
-				 window.localStorage.setItem("flyerJson_" + flyerId, flyerJson);
+		                 var flyerKey = "flyerJson_" + flyerId;
+				 window.localStorage.setItem(flyerKey, flyerJsonStr);
+				 debugLog("XXX: Setting " + flyerKey + " to " + flyerJsonStr);
 				 var savedFlyersArr = fetchSavedFlyers();
+				 
 				 savedFlyersArr.push(flyerId);
 				 var savedFlyersStr = savedFlyersArr.join();
+				 debugLog("XXX: New savedFlyersStr: " + savedFlyersStr + " (" + savedFlyersArr.length + ")");
 				 window.localStorage.setItem("flyers", savedFlyersStr);
 				 refreshSavedFlyers();
-				 $('#divDraggedFlyer').empty();
+				 clearDivDraggedFlyer();
 			     });
       
-      $('#divButtonDiscard').on('click', 
-				'#buttonDiscard', 
-				function() {
-				    refreshSavedFlyers();
-				    $('#divDraggedFlyer').empty();
-				});
+      btnDiscard.on('click', 
+		    function() {
+			refreshSavedFlyers();
+			clearDivDraggedFlyer();
+		    });
+
+      //      debugLog("XXX: Showing buttons.");
+      btnKeep.appendTo('#divButtons');
+      btnDiscard.appendTo('#divButtons');
+
       // Step 28.
       disconnect();
     }
@@ -183,12 +235,14 @@
     // oops (server->client)
     // welcome (server->client)
     disconnect();
-    if (!app.GetAd.Options.socket) {
+    
+    if (app.GetAd.Options.socket) {
+	debugLog("I see app.GetAd.Options.socket = " + app.GetAd.Options.socket);
+    } else {
+	debugLog("No app.GetAd.Options.socket, connecting.");
 	try {
 	    // Step 7.
-	    console.log("Trying to connect");
 	    app.GetAd.Options.socket = io.connect('http://ads.wildboard.net:8888');
-	    console.log("Connected: " + app.GetAd.Options.socket.id);
 	} catch (ex) {
 	    // Step 8.
 	    wbAlert("Cannot establish connection");
@@ -203,6 +257,7 @@
     app.GetAd.Options.socket.on('toPhoneYourColorIs', onYourColorIs);
     app.GetAd.Options.socket.on('toPhoneGetAd', onGetAd);
     app.GetAd.Options.socket.on('disconnect', onDisconnect);
+      refreshSavedFlyers();
     
   }
 })(window);
