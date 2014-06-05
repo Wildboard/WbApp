@@ -81,6 +81,7 @@
 		html += "</div>";
 		debugLog("Writing " + html);
 		$(html).appendTo('#savedFlyersOuterDiv');
+		$('<br>').appendTo('#savedFlyersOuterDiv');
 	    } catch (ex) {
 		debugLog("XXX refreshSavedFlyers(): Error: " + ex);
 		// do nothing
@@ -234,7 +235,16 @@
     // hi (client->server)
     // oops (server->client)
     // welcome (server->client)
-    disconnect();
+      disconnect();
+        
+      function bindSocketHandlers() {
+	  app.GetAd.Options.socket.on('connect', onConnect);
+	  app.GetAd.Options.socket.on('toPhoneOops', onOops);
+	  app.GetAd.Options.socket.on('toPhoneWelcome', onWelcome);
+	  app.GetAd.Options.socket.on('toPhoneYourColorIs', onYourColorIs);
+	  app.GetAd.Options.socket.on('toPhoneGetAd', onGetAd);
+	  app.GetAd.Options.socket.on('disconnect', onDisconnect);
+      }
     
     if (app.GetAd.Options.socket) {
 	debugLog("I see app.GetAd.Options.socket = " + app.GetAd.Options.socket);
@@ -243,6 +253,7 @@
 	try {
 	    // Step 7.
 	    app.GetAd.Options.socket = io.connect('http://ads.wildboard.net:8888');
+	    bindSocketHandlers();
 	} catch (ex) {
 	    // Step 8.
 	    wbAlert("Cannot establish connection");
@@ -251,12 +262,7 @@
 	}
     } 
 
-    app.GetAd.Options.socket.on('connect', onConnect);
-    app.GetAd.Options.socket.on('toPhoneOops', onOops);
-    app.GetAd.Options.socket.on('toPhoneWelcome', onWelcome);
-    app.GetAd.Options.socket.on('toPhoneYourColorIs', onYourColorIs);
-    app.GetAd.Options.socket.on('toPhoneGetAd', onGetAd);
-    app.GetAd.Options.socket.on('disconnect', onDisconnect);
+      
       refreshSavedFlyers();
     
   }
