@@ -1,22 +1,25 @@
 (function(window) {
-	console.log("wildboard] Post Ad");
-	app.PostAd = function() {
-		$(".page1").css("display", "block");
-		if (!app.PostAd.initiated) {
-			app.PostAd.init();
-		}
-		return app.PostAd.Content;
-
+    wbDebugLog("Entering PostAd view.");
+    
+    app.PostAd = function() {
+	$(".page1").css("display", "block");
+	$(".pageGetAd").css("display", "none");
+	wbDebugLog("app.PostAd.initiated: " + app.PostAd.initiated);
+	if (!app.PostAd.initiated) {
+	    app.PostAd.init();
 	}
+	return app.PostAd.Content;
+    }
 
-	app.PostAd.Content = $(".page1");
-	app.PostAd.Options = {}
-	app.PostAd.initiated = false;
-	app.PostAd.init = function() {
-	    // We are creating this here because in case of data URI submission we have to 
-	    // go through several callbacks. 
-	    var fuOptions;
-	    
+    app.PostAd.Content = $(".page1");
+    app.PostAd.Options = {}
+    app.PostAd.initiated = false;
+    app.PostAd.init = function() {
+	wbDebugLog("In app.PostAd.init()");
+	// We are creating this here because in case of data URI submission we have to 
+	// go through several callbacks. 
+	var fuOptions;
+	
 	    // Constant
 	    var DATA_URI_PREFIX = "data:image/jpeg;base64,";
 	    var PLACEHOLDER_IMAGE = "./img/placeholder.gif";
@@ -85,14 +88,6 @@
 			}
 		});
 
-		var alertCnt = 0;
-		
-		function ggDebug(s) {
-		    alertCnt++;
-		    navigator.notification.alert('' + alertCnt + '. ' + s, function(){});
-			console.log(s);
-		};
-		
 
 		/*
 		  // Sometimes you want to type information that was in the image
@@ -114,9 +109,7 @@
 		*/
 
 		var destType = navigator.camera.DestinationType.FILE_URI;
-		//		ggDebug("Platform: " + device.platform);
 		if (device.platform == 'Android') {
-		    //		    ggDebug("On Android for selectImage setting destianation to DATA_URL");
 		    destType = navigator.camera.DestinationType.DATA_URL;
 		}
 

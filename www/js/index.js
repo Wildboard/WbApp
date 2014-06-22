@@ -16,6 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+function onBackButton() {
+    console.log("BACKBUTTON");
+}
+
+var wbDebugCnt = 0;
+
+function wbDebugLog(s) {
+    wbDebugCnt++;
+    // navigator.notification.alert('' + wbDebugCnt + '. ' + s, function(){});
+    console.log(s);
+};
+
+
 var app = {
 	history : [],
 	// Application Constructor
@@ -34,8 +48,11 @@ var app = {
 	// The scope of 'this' is the event. In order to call the 'receivedEvent'
 	// function, we must explicity call 'app.receivedEvent(...);'
 	onDeviceReady : function() {
-		app.receivedEvent('deviceready');
+	app.receivedEvent('deviceready');
 	},
+
+	
+	
 	// Update DOM on a Received Event
 	receivedEvent : function(id) {
 		console.log("[wildboard] ", id)

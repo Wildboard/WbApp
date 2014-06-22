@@ -1,28 +1,11 @@
 (function(window) {
     
-    var debugCnt = 0;
-    
-    function debugLog(s) {
-	debugCnt ++;
-	console.log('' + debugCnt + ": " + s);
-    }
-    
-    debugLog("Entering GetAd view.");
-
-    function wbAlert(s) {
-      navigator.notification.alert(s, function(){});
-      console.log(s);
-    }
-
-    function ggDebug(s) {
-      alertCnt++;
-      wbAlert('' + alertCnt + '. ' + s);
-    };
-
+    wbDebugLog("Entering GetAd view.");
 
   app.GetAd = function() {
-      debugLog("In app.GetAd");
+      wbDebugLog("In app.GetAd");
       $(".pageGetAd").css("display", "block");
+      $(".page1").css("display", "none");
       app.GetAd.init();
       return app.GetAd.Content;
   }
@@ -33,32 +16,38 @@
   app.GetAd.initiated = false;
 
   app.GetAd.init = function() {
-      debugLog("In app.getAd.init()");
+      wbDebugLog("In app.getAd.init()");
       app.GetAd.initiated = true;
 
-    app.GetAd.Options = {};
+      app.GetAd.Options = {};
 
-    function fetchSavedFlyers() {
+      function fetchSavedFlyers() {
 	var flyersStr = window.localStorage.getItem("flyers");
 	var flyersArr = [];
 	if (flyersStr) {
 	    flyersArr = flyersStr.split(",");
 	}  
-	//	debugLog("XXX fetchSavedFlyers(): Fetched flyers: " + flyersStr + " (" + flyersArr.length + ")");
+	//	wbDebugLog("XXX fetchSavedFlyers(): Fetched flyers: " + flyersStr + " (" + flyersArr.length + ")");
 	return flyersArr;
+    }
+
+    function clearDivDraggedFlyer() {
+	$('#divDraggedFlyer').empty();
+	$('<div id="divDraggedFlyerImg"></div>').appendTo('#divDraggedFlyer');
+	$('<div id="divButtons"></div>').appendTo('#divDraggedFlyer');
     }
 
     function refreshSavedFlyers() {
 	$('#savedFlyersOuterDiv').empty();
 	var flyersArr = fetchSavedFlyers();
-	//	debugLog("XXX refreshSavedFlyers(): Found " + flyersArr.length + " saved flyers");
+	//	wbDebugLog("XXX refreshSavedFlyers(): Found " + flyersArr.length + " saved flyers");
 	for (var i = 0; i < flyersArr.length; i++) {
 	    var flyerId = flyersArr[i];
-	    //	    debugLog("XXX refreshSavedFlyers(): Flyer ID " + flyerId);
+	    //	    wbDebugLog("XXX refreshSavedFlyers(): Flyer ID " + flyerId);
 	    try {
 		var flyerKey = "flyerJson_"+flyerId;
 		var flyerJsonStr = window.localStorage.getItem(flyerKey);
-		// debugLog("XXX refreshSavedFlyers(): Fetched " + flyerKey +": " + flyerJsonStr);
+		// wbDebugLog("XXX refreshSavedFlyers(): Fetched " + flyerKey +": " + flyerJsonStr);
 		var flyerJson = JSON.parse(flyerJsonStr);
 		var imgSrc = flyerJson.mediaArea[0];
 		var title = flyerJson.titleArea.title;
@@ -79,11 +68,11 @@
 		html += contact + "<br/>";
 		html += "<img height=\"120\" align=\"center\" width=\"160\" src=\"" + imgSrc + "\"></img>";
 		html += "</div>";
-		debugLog("Writing " + html);
+		wbDebugLog("Writing " + html);
 		$(html).appendTo('#savedFlyersOuterDiv');
 		$('<br>').appendTo('#savedFlyersOuterDiv');
 	    } catch (ex) {
-		debugLog("XXX refreshSavedFlyers(): Error: " + ex);
+		wbDebugLog("XXX refreshSavedFlyers(): Error: " + ex);
 		// do nothing
 	    }
 	}
@@ -92,30 +81,21 @@
     $(".pageGetAd").css("display", "block");
     app.GetAd.Content = $(".pageGetAd");
     $('#serverMsg').html("");
-    
-    // TODO????
     $('#idGetAdArrowUp').css("display", "none");
-    
-    function clearDivDraggedFlyer() {
-	$('#divDraggedFlyer').empty();
-	$('<div id="divDraggedFlyerImg"></div>').appendTo('#divDraggedFlyer');
-	$('<div id="divButtons"></div>').appendTo('#divDraggedFlyer');
-    }
-    
     clearDivDraggedFlyer();
 
     function onConnect() {
 	// Step 9.
 	if (app.GetAd.Options.socket) {
 	    if (app.GetAd.Options.socket.id) {
-		debugLog("Connected: " + app.GetAd.Options.socket.id);     
+		wbDebugLog("Connected: " + app.GetAd.Options.socket.id);     
 	    } else {
-		debugLog("Connected: " + app.GetAd.Options.socket);
+		wbDebugLog("Connected: " + app.GetAd.Options.socket);
 	    }
+	    app.GetAd.Options.socket.emit('phoneHi', { deviceId : device.uuid});
 	} else {
-	    debugLog("Weird: " + app.GetAd.Options.socket);
+	    wbDebugLog("Weird: " + app.GetAd.Options.socket);
 	}
-	app.GetAd.Options.socket.emit('phoneHi', { deviceId : device.uuid});
     }
 
     function onDisconnect() {
@@ -131,12 +111,12 @@
     }      
 
     function disconnect() {
-	debugLog("Disconnecting.");
+	wbDebugLog("Disconnecting.");
 	if (app.GetAd.Options.socket) {
 	    try {
 		app.GetAd.Options.socket.disconnect();
 	    } catch (ex) {
-		debugLog("Error disconnecting: " + ex);
+		wbDebugLog("Error disconnecting: " + ex);
 	    }
 	}
 	$('#idGetAdArrowUp').css("display", "none");
@@ -150,67 +130,76 @@
 	  return;
       }
       // Step 14 in progress
-      debugLog("Connecting to " + data[0] + ".");
+      wbDebugLog("Connecting to " + data[0] + ".");
       $('#serverMsg').html("Connecting to " + data[0] + ".");
       app.GetAd.Options.socket.emit('phoneConnectTo', {boardName : data[0]});
     }
     
     function onGetAd(data) {
-      var flyerId = data.flyerId;
-      var flyerHtml = data.flyerHtml;
-      var flyerJsonStr = data.flyerJson;
-      debugLog("Received " + data.flyerId);
-      var flyerJson = JSON.parse(flyerJsonStr);
-      debugLog("Parsed JSON: " + flyerJson.titleArea.title);
-      // Step 27.
+	var flyerId = data.flyerId;
+	var flyerHtml = data.flyerHtml;
+	var flyerJsonStr = data.flyerJsonStr;
+	var flyerJsonObj = data.flyerJsonObj;
+	wbDebugLog("Received " + data.flyerId);
+	var flyerJson ;
+	try {
+	    var flyerJson = JSON.parse(flyerJsonStr);
+	} catch (error) {
+	    wbDebugLog("Error parsing " + flyerJsonStr);
+	    wbDebugLog(error);
+	    $('#serverMsg').html("Error occurred");
+	    return;
+	}
+	wbDebugLog("Parsed JSON: " + flyerJson.titleArea.title);
+	// Step 27.
       
-      var imgSrc = "";
-      // Modify the URL to point to main...
-      if (flyerJson.mediaArea.length > 0) {
+	var imgSrc = "";
+	// Modify the URL to point to main...
+	if (flyerJson.mediaArea.length > 0) {
 	  flyerJson.mediaArea[0] = flyerJson.mediaArea[0].replace("localhost/images","ads.wildboard.net/images/demo");
 	  imgSrc = flyerJson.mediaArea[0];
-      }
+	}
 
-      flyerJsonStr = JSON.stringify(flyerJson);
-
-      var html = "<img height=\"120\" width=\"160\" src=\"" + imgSrc + "\"></img>";
-
-      // debugLog("XXX: Setting html to " + html);
-
-      $('#divDraggedFlyerImg').html(html);
-      var btnKeep = $('<input type="button" id="buttonKeep" value="Keep"></button>');
-      var btnDiscard = $('<input type="button" id="buttonDiscard" value="Discard"></button>');
-
-      //      debugLog("XXX: " + $('#divDraggedFlyer').html());
-      //      debugLog("XXX: Attaching click to " + btnKeep);
-
-      btnKeep.on('click', 
-			     function() {
-		                 var flyerKey = "flyerJson_" + flyerId;
-				 window.localStorage.setItem(flyerKey, flyerJsonStr);
-				 debugLog("XXX: Setting " + flyerKey + " to " + flyerJsonStr);
-				 var savedFlyersArr = fetchSavedFlyers();
-				 
-				 savedFlyersArr.push(flyerId);
-				 var savedFlyersStr = savedFlyersArr.join();
-				 debugLog("XXX: New savedFlyersStr: " + savedFlyersStr + " (" + savedFlyersArr.length + ")");
-				 window.localStorage.setItem("flyers", savedFlyersStr);
-				 refreshSavedFlyers();
-				 clearDivDraggedFlyer();
-			     });
-      
-      btnDiscard.on('click', 
-		    function() {
-			refreshSavedFlyers();
-			clearDivDraggedFlyer();
-		    });
-
-      //      debugLog("XXX: Showing buttons.");
-      btnKeep.appendTo('#divButtons');
-      btnDiscard.appendTo('#divButtons');
-
-      // Step 28.
-      disconnect();
+	flyerJsonStr = JSON.stringify(flyerJson);
+	
+	var html = "<img height=\"120\" width=\"160\" src=\"" + imgSrc + "\"></img>";
+	
+	wbDebugLog("XXX: Setting html to " + html);
+	
+	$('#divDraggedFlyerImg').html(html);
+	var btnKeep = $('<input type="button" id="buttonKeep" value="Keep"></button>');
+	var btnDiscard = $('<input type="button" id="buttonDiscard" value="Discard"></button>');
+	
+	//      wbDebugLog("XXX: " + $('#divDraggedFlyer').html());
+	//      wbDebugLog("XXX: Attaching click to " + btnKeep);
+	
+	btnKeep.on('click', 
+		   function() {
+		       var flyerKey = "flyerJson_" + flyerId;
+		       window.localStorage.setItem(flyerKey, flyerJsonStr);
+		       wbDebugLog("XXX: Setting " + flyerKey + " to " + flyerJsonStr);
+		       var savedFlyersArr = fetchSavedFlyers();
+		       
+		       savedFlyersArr.push(flyerId);
+		       var savedFlyersStr = savedFlyersArr.join();
+		       wbDebugLog("XXX: New savedFlyersStr: " + savedFlyersStr + " (" + savedFlyersArr.length + ")");
+		       window.localStorage.setItem("flyers", savedFlyersStr);
+		       refreshSavedFlyers();
+		       clearDivDraggedFlyer();
+		   });
+	
+	btnDiscard.on('click', 
+		      function() {
+			  refreshSavedFlyers();
+			  clearDivDraggedFlyer();
+		      });
+	
+      //      wbDebugLog("XXX: Showing buttons.");
+	btnKeep.appendTo('#divButtons');
+	btnDiscard.appendTo('#divButtons');
+	
+	// Step 28.
+	disconnect();
     }
     
     
@@ -245,11 +234,12 @@
 	  app.GetAd.Options.socket.on('toPhoneGetAd', onGetAd);
 	  app.GetAd.Options.socket.on('disconnect', onDisconnect);
       }
-    
-    if (app.GetAd.Options.socket) {
-	debugLog("I see app.GetAd.Options.socket = " + app.GetAd.Options.socket);
+      
+      if (app.GetAd.Options.socket) {
+	wbDebugLog("I see app.GetAd.Options.socket = " + app.GetAd.Options.socket);
+	$('#idGetAdArrowUp').css("display", "block");
     } else {
-	debugLog("No app.GetAd.Options.socket, connecting.");
+	wbDebugLog("No app.GetAd.Options.socket, connecting.");
 	try {
 	    // Step 7.
 	    app.GetAd.Options.socket = io.connect('http://ads.wildboard.net:8888');
@@ -260,10 +250,8 @@
 	    $('#serverMsg').html("No connection.");
 	    return;
 	}
-    } 
-
-      
+      }
+        
       refreshSavedFlyers();
-    
   }
 })(window);
