@@ -25,6 +25,7 @@ var wbDebugCnt = 0;
 
 function wbDebugLog(s) {
     wbDebugCnt++;
+    s = '' + wbDebugCnt + ". " + s;
     // navigator.notification.alert('' + wbDebugCnt + '. ' + s, function(){});
     console.log(s);
 };

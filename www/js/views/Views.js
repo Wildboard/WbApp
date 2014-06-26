@@ -24,7 +24,7 @@
 	}
 	// returns {} for viewNavigator
 	app.getViewObject = function(view) {
-		console.log("wildboard] get view : " + view);
+	    //console.log("wildboard] get view : " + view);
 		switch (view) {
 		case "ScanQR":
 			return {

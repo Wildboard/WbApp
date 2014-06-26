@@ -31,7 +31,7 @@
 		//	window.viewNavigator.pushView(navView);
 		});
 		$('.getAd').bind("click", function(event) {
-			console.log("[wildboard] GetAd CLICK: ");
+			// console.log("[wildboard] GetAd CLICK: ");
 			var navView = app.getViewObject("GetAd");
 			app.deleteHistory();
 			app.updateHistory(navView);

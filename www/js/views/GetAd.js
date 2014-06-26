@@ -2,6 +2,7 @@
     
     wbDebugLog("Entering GetAd view.");
 
+
   app.GetAd = function() {
       wbDebugLog("In app.GetAd");
       $(".pageGetAd").css("display", "block");
@@ -18,7 +19,7 @@
   app.GetAd.init = function() {
       wbDebugLog("In app.getAd.init()");
       app.GetAd.initiated = true;
-
+      
       app.GetAd.Options = {};
 
       function fetchSavedFlyers() {
@@ -68,7 +69,7 @@
 		html += contact + "<br/>";
 		html += "<img height=\"120\" align=\"center\" width=\"160\" src=\"" + imgSrc + "\"></img>";
 		html += "</div>";
-		wbDebugLog("Writing " + html);
+		// wbDebugLog("Writing " + html);
 		$(html).appendTo('#savedFlyersOuterDiv');
 		$('<br>').appendTo('#savedFlyersOuterDiv');
 	    } catch (ex) {
@@ -164,7 +165,7 @@
 	
 	var html = "<img height=\"120\" width=\"160\" src=\"" + imgSrc + "\"></img>";
 	
-	wbDebugLog("XXX: Setting html to " + html);
+	// wbDebugLog("XXX: Setting html to " + html);
 	
 	$('#divDraggedFlyerImg').html(html);
 	var btnKeep = $('<input type="button" id="buttonKeep" value="Keep"></button>');
@@ -202,7 +203,6 @@
 	disconnect();
     }
     
-    
     function onYourColorIs(data) {
 	var myColor = data.color;
 	// Step 20. 
@@ -227,6 +227,11 @@
       disconnect();
         
       function bindSocketHandlers() {
+	  wbDebugLog("Entered bindSocketHandlers()"); 
+
+
+
+
 	  app.GetAd.Options.socket.on('connect', onConnect);
 	  app.GetAd.Options.socket.on('toPhoneOops', onOops);
 	  app.GetAd.Options.socket.on('toPhoneWelcome', onWelcome);
@@ -242,8 +247,12 @@
 	wbDebugLog("No app.GetAd.Options.socket, connecting.");
 	try {
 	    // Step 7.
-	    app.GetAd.Options.socket = io.connect('http://ads.wildboard.net:8888');
+	    app.GetAd.Options.socket = io.connect('http://ads.wildboard.net:8888',
+						  {'force new connection': true});
+	    
 	    bindSocketHandlers();
+	    wbDebugLog("Socket: " + app.GetAd.Options.socket + " ("
+		       + app.GetAd.Options.socket.id);
 	} catch (ex) {
 	    // Step 8.
 	    wbAlert("Cannot establish connection");
