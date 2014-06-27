@@ -1,0 +1,208 @@
+(function(window) {
+	console.log("wildboard] POst Ad");
+	app.PostAd = function() {
+		$(".page1").css("display", "block");
+		if (!app.PostAd.initiated) {
+			app.PostAd.init();
+		}
+
+		return app.PostAd.Content;
+
+	}
+	app.PostAd.Content = $(".page1");
+	app.PostAd.Options = {}
+	app.PostAd.initiated = false;
+	app.PostAd.init = function() {
+		console.log("[wildboard] app.PostAd INIT ")
+		var selectorInProgress = false;
+		app.PostAd.initiated = true
+		app.PostAd.Options = {}
+		// $('<div class="page page2">MAIN VIEW PAGE</div>')
+		$(".page1").css("display", "block")
+		app.PostAd.Content = $(".page1");
+		
+		//console.log("localStorage "+window.localStorage.getItem("name"))
+		if(window.localStorage.getItem("name")){
+		$("#name").val(window.localStorage.getItem("name"))
+		}
+		if(window.localStorage.getItem("email")){
+		$("#email").val(window.localStorage.getItem("email"));
+		}
+		
+		$('#datetimepicker_start').datetimepicker();
+		$('#datetimepicker_end').datetimepicker();
+
+		$('#datetimepicker_start').click(function() {
+			$('#datetimepicker_start').datetimepicker('show');
+		});
+		$('#datetimepicker_end').click(function() {
+			console.log("datetimepicker_start click")
+			$('#datetimepicker_end').datetimepicker('show');
+		});
+
+		$('#datetimepicker_start').datetimepicker({
+			onChangeDateTime : function(dp, $input) {
+				$('#datetimepicker_start').text($input.val())
+			}
+		});
+		$('#datetimepicker_end').datetimepicker({
+			onChangeDateTime : function(dp, $input) {
+				$('#datetimepicker_end').text($input.val())
+			}
+		});
+
+		$('#events').live('change', function() {
+			if ($(this).is(':checked')) {
+				$('.eventsOptions').css('display', 'block')
+				// window.viewNavigator.refreshScroller()
+			} else {
+				$('.eventsOptions').css('display', 'none')
+				$('#datetimepicker_start').datetimepicker('hide');
+				$('#datetimepicker_end').datetimepicker('hide');
+				// window.viewNavigator.refreshScroller()
+			}
+		});
+
+		$(".selectImage").unbind("touchstart")
+		$(".selectImage").bind("touchstart", function(event) {
+			console.log("[wildboard]---------- select Image CLICK")
+			navigator.camera.getPicture(onSuccess, onFail, {
+				quality : 50,
+				destinationType : navigator.camera.DestinationType.FILE_URI,
+				sourceType : navigator.camera.PictureSourceType.PHOTOLIBRARY,
+				encodingType : navigator.camera.EncodingType.PNG,
+				correctOrientation : true
+			})
+			event.preventDefault();
+			event.stopPropagation();
+		})
+		$(".submitAd").unbind("touchstart")
+		$(".submitAd").bind("touchstart", startSubmitAd)
+		function startSubmitAd() {
+			console.log("[wildboard] SUBMIT CLICK");
+			console.log("[wildboard] startSubmitAd selectorInProgress "
+					+ selectorInProgress)
+			if (constructParams() != null) {
+				// window.viewNavigator.refreshScroller()
+				$(".info").css("display", "none")
+				if (!selectorInProgress) {
+					selectorInProgress = true;
+					console.log("[wildboard] app.PostAd.Options.file "
+							+ app.PostAd.Options.file)
+					if (app.PostAd.Options.file) {
+						console.log("[wildboard] SUBMIT AD WITH PICTURE")
+						submitAd()
+					} else {
+						submitAdAjax()
+					}
+				}
+			} else {
+				// required
+				// window.viewNavigator.refreshScroller()
+				$(".info").css("display", "block")
+			}
+		}
+		function onSuccess(imageData) {
+
+			console.log('[wildboard] onSuccess: ' + imageData);
+
+			app.PostAd.Options.file = imageData;
+			// var image = document.getElementById('base64image');
+			// image.src = "data:image/jpeg;base64," + imageData;
+			// image.src =
+			// pp.PostAd.Options.file.substr(app.PostAd.Options.file.lastIndexOf('/')
+			// + 1) + '.jpeg'
+			window.resolveLocalFileSystemURI(imageData, function(fileEntry) {
+				//alert(fileEntry.fullPath);
+				var image = document.getElementById('base64image');
+				image.src = fileEntry.fullPath
+			}, function() {
+				console.log("error getting full path");
+				var image = document.getElementById('base64image');
+				image.src = "data:image/jpeg;base64," + imageData;
+			});
+		}
+		function submitAdAjax() {
+			selectorInProgress = false
+			if (constructParams() != null) {
+				var params = constructParams()
+			} else {
+				var params = {};
+			}
+			$.ajax({
+				type : 'POST',
+				url : "http://ads.wildboard.net/publish-new.html",
+				data : params,
+				error : function(jqXHR, textStatus, errorThrown) {
+					console.log('[wildboard] Failed to upload file')
+				},
+				success : function() {
+					console.log('[wildboard] File uploaded')
+				}
+			})
+
+		}
+		function constructParams() {
+			if ($("#title").val() != ""
+					&& $(".page input:checked").val() != undefined
+					&& $("#description").val() != "" && $("#name").val() != ""
+					&& $("#email").val() != "") {
+				var params = new Object();
+				params.title = $("#title").val()
+				params.name = $("#name").val()
+				params.email = $("#email").val()
+				params.category = $(".page input:checked").val()
+				params.description = $("#description").val();
+				//console.log("localStorage "+window.localStorage.getItem("name"))
+				window.localStorage.setItem("name", params.name);
+				window.localStorage.setItem("email", params.email);
+				return params;
+			} else {
+				console.log("NULL")
+				return null;
+			}
+
+			// $(".page input:checked").val();
+			// $("#description").val()
+		}
+		function submitAd() {
+			selectorInProgress = false
+			var options = new FileUploadOptions();
+			options.fileKey = "image0";
+			options.fileName = app.PostAd.Options.file.substr(app.PostAd.Options.file.lastIndexOf('/') + 1)+ '.png';
+			options.mimeType = "image/png";
+
+			if (constructParams() != null) {
+				var params = constructParams()
+			} else {
+				$(".info").css("display", "block")
+				return;
+				var params = {};
+			}
+			options.params = params;
+
+			var ft = new FileTransfer();
+			ft.upload(app.PostAd.Options.file,
+					encodeURI("http://ads.wildboard.net/publish-new.html"),
+					win, fail, options);
+
+		}
+		function win(r) {
+			console.log("[wildboard]  Code = " + r.responseCode);
+			console.log("[wildboard]  Response = " + r.response);
+			console.log("[wildboard]  Sent = " + r.bytesSent);
+		}
+
+		function fail(error) {
+			alert("[wildboard]  An error has occurred: Code = " + error.code);
+			console.log("[wildboard]  upload error source " + error.source);
+			console.log("[wildboard]  upload error target " + error.target);
+		}
+
+		function onFail(message) {
+			selectorInProgress = false
+			console.log('[wildboard]  Failed because: ' + message);
+		}
+
+	}
+})(window)
