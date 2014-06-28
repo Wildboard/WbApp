@@ -11,10 +11,27 @@
       return app.GetAd.Content;
   }
 
+  
+
   app.GetAd.Content = $(".pageGetAd");
   app.GetAd.Options = {};
   app.GetAd.Options.socket = null;
   app.GetAd.initiated = false;
+
+  function onGeoSuccess(pos) {
+      wbDebugLog("Got coordinates: " + position.coords.latitude + "x" +position.coords.longitude);
+      app.GetAd.Options.position = pos;
+  }
+
+  function onGeoError(err) {
+      wbDebugLog("Could not get position: " + err.code + ": " + err.message);
+      app.GetAd.Options.position = null;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+					   onGeoSuccess, 
+					   onGeoError, 
+					   { enableHighAccuracy: true });
 
   app.GetAd.init = function() {
       wbDebugLog("In app.getAd.init()");
@@ -85,6 +102,8 @@
     $('#idGetAdArrowUp').css("display", "none");
     clearDivDraggedFlyer();
 
+    
+
     function onConnect() {
 	// Step 9.
 	if (app.GetAd.Options.socket) {
@@ -93,7 +112,13 @@
 	    } else {
 		wbDebugLog("Connected: " + app.GetAd.Options.socket);
 	    }
-	    app.GetAd.Options.socket.emit('phoneHi', { deviceId : device.uuid});
+	    var msg = { deviceId : device.uuid, latitude : -1, longitude : -1};
+	    if (app.GetAd.Options.position) {
+		msg.latitude = app.GetAd.Options.position.coords.latitude;
+		msg.longitude = app.GetAd.Options.position.coords.longitude;
+	    }
+	    app.GetAd.Options.socket.emit('phoneHi', 
+					  msg);
 	} else {
 	    wbDebugLog("Weird: " + app.GetAd.Options.socket);
 	}
@@ -101,6 +126,7 @@
 
     function onDisconnect() {
       $('#serverMsg').html("Disconnected");
+      $('#divConnectToDifferentBoard').css("display", "none");
       app.GetAd.Options.socket = null;
     }
 
@@ -224,13 +250,10 @@
     // hi (client->server)
     // oops (server->client)
     // welcome (server->client)
-      disconnect();
+     disconnect();
         
       function bindSocketHandlers() {
 	  wbDebugLog("Entered bindSocketHandlers()"); 
-
-
-
 
 	  app.GetAd.Options.socket.on('connect', onConnect);
 	  app.GetAd.Options.socket.on('toPhoneOops', onOops);
