@@ -157,6 +157,29 @@
 	  return;
       }
       // Step 14 in progress
+      $('#selectBoard').empty();
+      for (var i = 0; i<data.length; i++) {
+	  var sel = "";
+	  if (i == 0) {
+	      sel = "selected";
+	  }
+
+	  if (i > 0) { 
+	      // TODO allow switching to a different board...
+	      sel = "disabled";
+	  }
+
+	  var opt = $('<OPTION ' +
+		      sel + 
+		      ' ' +
+		      value + 
+		      '"' + 
+		      data[i] + 
+		      '">'  + 
+		      data[i] + 
+		      "</option>");
+	  opt.appendTo('#selectBoard');
+      }
       wbDebugLog("Connecting to " + data[0] + ".");
       $('#serverMsg').html("Connecting to " + data[0] + ".");
       app.GetAd.Options.socket.emit('phoneConnectTo', {boardName : data[0]});
