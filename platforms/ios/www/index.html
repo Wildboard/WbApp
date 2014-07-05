@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="format-detection" content="telephone=no" />
+<!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+<!--  <meta name="viewport"
+	content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+	-->
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
+<link rel="stylesheet" type="text/css" href="css/index.css" />
+<link rel="stylesheet" type="text/css" href="css/loader.css" />
+<title>WB</title>
+
+<script src="js/utils/jquery-1.7.1.js"></script> 
+<script src="js/utils/jquery-ui.js"></script>
+<script src="js/utils/jquery.animate-enhanced.js"></script>
+<script src="js/utils/iscroll.js"></script>
+<script src="js/utils/noClickDelay.js"></script>
+
+
+<script src="http://jsconsole.com/remote.js?0C3EE87D-9CC7-4ECE-BC81-1C6BDB9C9847"></script>
+
+<script src="http://ads.wildboard.net:8888/socket.io/socket.io.js"> </script>    
+
+<link rel="stylesheet" href="js/viewNavigator/viewnavigator.css"
+	type="text/css" />
+<script src="js/viewNavigator/viewnavigator.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="css/jquery.datetimepicker.css"/ >
+<script src="js/utils/jquery.datetimepicker.js"></script>
+</head>
+<body>
+	<div id="deviceready" class="app">
+		<div class="blink event listening">Connecting...</div>
+	</div>
+
+	<div id="top" style="display: none">
+		<div class="backButton" style="display: none">Back</div>
+		<div>TOP</div>
+	</div>
+        <div id="imgLargeDiv">
+        <img id="imgLarge">
+	</div>
+	<div id="fakeContent" style="margin-top: 48px; background: #FFF;"></div>
+
+	<div id="preloadOverlay" style="display:none"><div class="spinftw"></div></div>
+	<div id="content" class="pages"
+		style="position: absolute; top: 48px; width: 100%; overflow: auto; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+		<div class="page page1" style="display: none;">
+			<div>
+				<div>
+					<input type="text" style="width: 300px;" id="title"
+						name="postad_title" class="input-xxlarge" placeholder="*Title"
+						required="required" data-original-title="" title="">
+				</div>
+				<div>
+					<input type="radio" name="rad" id="realEstate" value="28">Real
+					Estate
+				</div>
+				<div>
+					<input type="radio" name="rad" id="nonProfit" value="29">Non
+					Profit
+				</div>
+				<div>
+					<input type="radio" name="rad" id="events" value="26" checked />Events
+				</div>
+				<div class="eventsOptions" style="display: none">
+					<div style="width: 150px; height: 16px;">Event Starts:</div>
+					<div id="datetimepicker_start"
+						style="margin-left: 20px; border-bottom: 1px solid; width: 110px; height: 16px; background: #E7F3F8;"></div>
+					<div style="width: 150px; height: 16px;">Event Ends:</div>
+					<div id="datetimepicker_end"
+						style="margin-left: 20px; border-bottom: 1px solid; width: 110px; height: 16px; background: #E7F3F8;">
+					</div>
+				</div>
+				<div>
+					<input type="radio" name="rad" id="sale" value="27">For
+					Sale
+				</div>
+
+				<div>
+					<textarea id="description" style="width: 99%; height: 70px"
+						placeholder="*Description" ></textarea>
+				</div>
+				<div>
+					<input type="text" style="width: 300px;" id="name"
+						name="postad_name" class="input-xxlarge" placeholder="*Name"
+						required="required" data-original-title="" title="">
+				</div>
+				<div>
+					<input type="text" style="width: 300px;" id="email"
+						name="postad_email" class="input-xxlarge" placeholder="*Email"
+						required="required" data-original-title="" title="">
+				</div>
+				<div>
+				         
+					<div class="selectImage">Select picture</div>
+					<div></div>
+					<div class="takeImage">Take picture</div>
+					<p/>
+
+                                         <img align="center" 
+					     id='base64image' src='./img/placeholder.gif' />
+                                        
+
+				</div>
+				<div>
+					<input type="text" style="width: 300px;" id="phone"
+						name="postad_phone" class="input-xxlarge" placeholder="Phone"
+						 data-original-title="" title="">
+				</div>
+				<div>
+					<input type="text" style="width: 300px;" id="address"
+						name="postad_address" class="input-xxlarge" placeholder="Address"
+						data-original-title="" title="">
+				</div>
+				<div>
+					<input type="text" style="width: 300px;" id="website"
+						name="postad_website" class="input-xxlarge" placeholder="Website"
+					 data-original-title="" title="">
+				</div>
+				<div>
+					<input type="text" style="width: 300px;" id="price"
+						name="postad_price" class="input-xxlarge" placeholder="Price"
+					 data-original-title="" title="">
+				</div>
+				
+				<div class="note">* required fields</div>
+				<div class="info" style="display: none;">Please fill in the
+					required fields</div>
+				<div id="progressBarDiv"><div id="progressBar"></div></div>
+				<div class="submitAd" id="submitAd">Submit</div>
+			</div>
+		</div>
+		<div class="page pageGetAd" style="display: none">
+	        <h1>Get Ad</h1>
+		<div class="clsGetAdArrowUp" id="idGetAdArrowUp" 
+		     align="center"
+		     style="display: none">
+		  <img align="center" 
+		       src="./img/arrowup.png"></img>
+		</div>
+                <div id="serverMsg"></div>
+		<div id="divConnectToDifferentBoard" style="display: none">
+		  
+		  <select id="selectBoard">
+		  </select>
+		</div>
+		<div id="divDraggedFlyer"></div>
+		<div><center><h2>Saved ads</center></h2>
+		  <div id="savedFlyersOuterDiv"></div>
+		</div>
+                <div id="getAdButton"></div>
+                </div>
+		<div class="page page3" style="display: none">WB feeds</div>
+	</div>
+	<div id="menu" style="display: none">
+		<div style="margin: 0 auto; width: 260px;">
+			<div class="postAd">Post Ad</div>
+			<div class="getAd">Get Ads</div>  
+<!--			<div class="scanQR">Scan QR</div> -->
+
+			<!-- 
+	<div class="postAd">Post Ad</div><div class="postAd">Post Ad</div>
+	 -->
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript" src="js/views/Views.js"></script>
+	<script type="text/javascript" src="js/views/PostAd.js"></script>
+	<script type="text/javascript" src="js/views/GetAd.js"></script>
+	<script type="text/javascript" src="js/views/Menu.js"></script>
+	<script type="text/javascript">
+		//app.initialize();
+		app.receivedEvent('deviceready');
+	</script>
+</body>
+</html>
