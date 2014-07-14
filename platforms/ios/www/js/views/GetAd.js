@@ -171,9 +171,7 @@
 
 	  var opt = $('<OPTION ' +
 		      sel + 
-		      ' ' +
-		      value + 
-		      '"' + 
+		      ' value="' + 
 		      data[i] + 
 		      '">'  + 
 		      data[i] + 
