@@ -289,6 +289,13 @@ module.exports = [
         "clobbers": [
             "navigator.geolocation"
         ]
+    },
+    {
+        "file": "plugins/com.moust.cordova.videoplayer/www/videoplayer.js",
+        "id": "com.moust.cordova.videoplayer.VideoPlayer",
+        "clobbers": [
+            "VideoPlayer"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -300,7 +307,8 @@ module.exports.metadata =
     "org.apache.cordova.file": "1.1.0",
     "org.apache.cordova.file-transfer": "0.4.2",
     "org.apache.cordova.contacts": "0.2.10",
-    "org.apache.cordova.geolocation": "0.3.8"
+    "org.apache.cordova.geolocation": "0.3.8",
+    "com.moust.cordova.videoplayer": "1.0.0"
 }
 // BOTTOM OF METADATA
 });

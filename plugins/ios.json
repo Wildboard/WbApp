@@ -114,6 +114,9 @@
         },
         "org.apache.cordova.geolocation": {
             "PACKAGE_NAME": "net.wildboard.apps.Wildboard"
+        },
+        "com.moust.cordova.videoplayer": {
+            "PACKAGE_NAME": "net.wildboard.apps.Wildboard"
         }
     },
     "dependent_plugins": {}

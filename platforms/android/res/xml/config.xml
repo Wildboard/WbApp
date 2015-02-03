@@ -1,10 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="net.wildboard.apps.Wildboard" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <preference name="loglevel" value="DEBUG" />
-    <preference name="AndroidLaunchMode" value="singleTop" />
-    <feature name="App">
-        <param name="android-package" value="org.apache.cordova.App" />
-    </feature>
     <feature name="Camera">
         <param name="android-package" value="org.apache.cordova.camera.CameraLauncher" />
     </feature>
@@ -24,6 +20,9 @@
     <feature name="Contacts">
         <param name="android-package" value="org.apache.cordova.contacts.ContactManager" />
     </feature>
+    <feature name="VideoPlayer">
+        <param name="android-package" value="com.moust.cordova.videoplayer.VideoPlayer" />
+    </feature>
     <name>Wildboard</name>
     <description>
      A mobile companion to Wildboard, your community-based interactive digital signage.
@@ -31,7 +30,6 @@
     <author email="ops@wildboard.net" href="http://www.wildboard.net">
       Wildboard Inc.
     </author>
-    <feature name="http://api.phonegap.com/1.0/device" />
     <preference name="permissions" value="none" />
     <preference name="phonegap-version" value="3.3.0" />
     <preference name="orientation" value="default" />
@@ -73,11 +71,13 @@
     <gap:splash gap:density="hdpi" gap:platform="android" src="www/res/screen/android/screen-hdpi-portrait.png" />
     <gap:splash gap:density="xhdpi" gap:platform="android" src="www/res/screen/android/screen-xhdpi-portrait.png" />
     <gap:splash gap:platform="blackberry" src="www/res/screen/blackberry/screen-225.png" />
-    <gap:splash gap:platform="ios" height="480" src="www/res/screen/ios/screen-iphone-portrait.png" width="320" />
-    <gap:splash gap:platform="ios" height="960" src="www/res/screen/ios/screen-iphone-portrait-2x.png" width="640" />
-    <gap:splash gap:platform="ios" height="1024" src="www/res/screen/ios/screen-ipad-portrait.png" width="768" />
-    <gap:splash gap:platform="ios" height="768" src="www/res/screen/ios/screen-ipad-landscape.png" width="1024" />
+    <gap:splash gap:platform="ios" height="480" src="res/screen/ios/screen-iphone-portrait.png" width="320" />
+    <gap:splash gap:platform="ios" height="960" src="res/screen/ios/screen-iphone-portrait-2x.png" width="640" />
+    <gap:splash gap:platform="ios" height="1136" src="res/screen/ios/screen-iphone-portrait-568h-2x.png" width="640" />
+    <gap:splash gap:platform="ios" height="1024" src="res/screen/ios/screen-ipad-portrait.png" width="768" />
+    <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
     <gap:splash gap:platform="winphone" src="www/res/screen/windows-phone/screen-portrait.jpg" />
+    <gap:splash gap:platform="ios" height="1136" src="splash/ios/Default_iphone5.png" width="640" />
     <content src="index.html" />
     <access origin="*" />
 </widget>

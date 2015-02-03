@@ -222,19 +222,7 @@
 	//      wbDebugLog("XXX: Attaching click to " + btnKeep);
 	
 	btnKeep.on('click', 
-		   function() {
-		       var flyerKey = "flyerJson_" + flyerId;
-		       window.localStorage.setItem(flyerKey, flyerJsonStr);
-		       wbDebugLog("XXX: Setting " + flyerKey + " to " + flyerJsonStr);
-		       var savedFlyersArr = fetchSavedFlyers();
-		       
-		       savedFlyersArr.push(flyerId);
-		       var savedFlyersStr = savedFlyersArr.join();
-		       wbDebugLog("XXX: New savedFlyersStr: " + savedFlyersStr + " (" + savedFlyersArr.length + ")");
-		       window.localStorage.setItem("flyers", savedFlyersStr);
-		       refreshSavedFlyers();
-		       clearDivDraggedFlyer();
-		   });
+		   keepAd);
 	
 	btnDiscard.on('click', 
 		      function() {
@@ -242,15 +230,29 @@
 			  clearDivDraggedFlyer();
 		      });
 	
-      //      wbDebugLog("XXX: Showing buttons.");
-	btnKeep.appendTo('#divButtons');
-	btnDiscard.appendTo('#divButtons');
-	
+	//      wbDebugLog("XXX: Showing buttons.");
+	// btnKeep.appendTo('#divButtons');
+	// btnDiscard.appendTo('#divButtons');
+	keepAd();
 	// Step 28.
 	disconnect();
     }
-    
-    function onYourColorIs(data) {
+
+      function keepAd()	{
+	  var flyerKey = "flyerJson_" + flyerId;
+	  window.localStorage.setItem(flyerKey, flyerJsonStr);
+	  wbDebugLog("XXX: Setting " + flyerKey + " to " + flyerJsonStr);
+	  var savedFlyersArr = fetchSavedFlyers();
+	  
+	  savedFlyersArr.push(flyerId);
+	  var savedFlyersStr = savedFlyersArr.join();
+	  wbDebugLog("XXX: New savedFlyersStr: " + savedFlyersStr + " (" + savedFlyersArr.length + ")");
+	  window.localStorage.setItem("flyers", savedFlyersStr);
+	  refreshSavedFlyers();
+	  clearDivDraggedFlyer();
+      }
+      
+      function onYourColorIs(data) {
 	var myColor = data.color;
 	// Step 20. 
 	$('#serverMsg').html('<font color="' + 
